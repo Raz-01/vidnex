@@ -17,6 +17,12 @@ export const users = pgTable("users", {
   // TODO(legal/anti-abuse): revisit before any real earn-rate increase.
   isVerifiedHuman: boolean("is_verified_human").notNull().default(false),
 
+  // Admin/moderation access (M4). Deliberately NOT settable from any
+  // in-app UI - there is no "make admin" button anywhere, only
+  // scripts/promote-admin.mjs run directly against the database. See
+  // DECISIONS.md on why that's the safer default.
+  isAdmin: boolean("is_admin").notNull().default(false),
+
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

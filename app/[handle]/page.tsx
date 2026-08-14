@@ -100,7 +100,9 @@ export default async function CreatorPage({
   const creatorVideos = await db
     .select()
     .from(videos)
-    .where(and(eq(videos.creatorId, row.creator.id), eq(videos.status, "ready")))
+    .where(
+      and(eq(videos.creatorId, row.creator.id), eq(videos.status, "ready"), eq(videos.isRemoved, false)),
+    )
     .orderBy(desc(videos.createdAt))
     .limit(60);
 

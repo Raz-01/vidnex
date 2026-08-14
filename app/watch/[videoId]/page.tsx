@@ -60,7 +60,7 @@ export default async function WatchPage({
 }) {
   const { videoId } = await params;
   const row = await getVideo(videoId);
-  if (!row) notFound();
+  if (!row || row.video.isRemoved) notFound();
 
   const session = await auth();
   const isOwner = session?.user?.id && row.creator.userId === session.user.id;
@@ -98,7 +98,7 @@ export default async function WatchPage({
       .select({ comment: comments, name: users.name })
       .from(comments)
       .innerJoin(users, eq(comments.userId, users.id))
-      .where(eq(comments.videoId, videoId))
+      .where(and(eq(comments.videoId, videoId), eq(comments.isRemoved, false)))
       .orderBy(desc(comments.createdAt))
       .limit(50),
   ]);

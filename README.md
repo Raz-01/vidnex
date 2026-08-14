@@ -7,26 +7,31 @@ full product brief, [DECISIONS.md](./DECISIONS.md) for build decisions, and
 [TOKENOMICS.md](./TOKENOMICS.md) for the token model.
 
 This repo is built in milestones (**M0 → M4**), each deployable and
-demoable on its own. Current status: **M3 - Token economy + creator
-dashboard**.
+demoable on its own. Current status: **M4 - Curated feed, admin,
+instrumentation. All five milestones (M0-M4) are shipped.**
 
 **Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) - landing
-page, [/creators](https://vidnex-chi.vercel.app/creators) waitlist, and
-login UI are all live. Auth (Google/email), DB writes (waitlist, creator
-profiles, the whole token economy), and video upload/playback (Mux) are
-**not yet functional in production**: the deploy runs on placeholder
+page, [/creators](https://vidnex-chi.vercel.app/creators) waitlist,
+[/feed](https://vidnex-chi.vercel.app/feed), and login UI are all live.
+Auth (Google/email), DB writes (waitlist, creator profiles, the whole
+token economy, admin actions), and video upload/playback (Mux) are **not
+yet functional in production**: the deploy runs on placeholder
 Neon/Upstash/Google/Resend/Mux credentials so the build succeeds; swap in
 real ones (see below) to light those up. One consequence worth knowing:
 pages that unconditionally read the DB on every request (`/[handle]`,
-`/watch/[id]`) currently 500 instead of 404ing on an unknown
-handle/video, because the placeholder `DATABASE_URL` host doesn't
-resolve at all - a real Neon connection fixes this too.
+`/watch/[id]`, `/feed`) currently 500 instead of 404ing/showing empty,
+because the placeholder `DATABASE_URL` host doesn't resolve at all - a
+real Neon connection fixes this too.
+
+**Becoming an admin:** there is no in-app way to do this by design (see
+DECISIONS.md). Once `DATABASE_URL` is real, run
+`npm run admin:promote -- you@email.com` after signing in at least once.
 
 ## Stack
 
 Next.js 15 (App Router) · TypeScript · Tailwind v4 · Drizzle ORM + Neon
 (Postgres) · Upstash Redis · Auth.js v5 (Google + email) · Mux (video, from
-M2) · Cloudflare R2 (media, from M2) · PostHog (analytics).
+M2) · Cloudflare R2 (media, not yet wired) · PostHog (analytics, from M4).
 
 ## Getting started
 
@@ -65,15 +70,17 @@ npm run icons          # regenerate PWA/favicon PNGs from the logo mark
 npm run db:generate    # generate a new Drizzle migration from schema changes
 npm run db:push        # push schema directly (fast iteration, pre-launch)
 npm run db:studio      # Drizzle Studio - browse the database
+npm run admin:promote  # -- you@email.com - grant admin access (no in-app way to do this)
 ```
 
 ## Project layout
 
 ```
-/app            # Next.js routes (marketing, auth, creator pages/studio, watch, feed/dashboard/admin to come)
+/app            # Next.js routes (marketing, auth, creator pages/studio, watch, feed, admin)
 /components/ui     # Design system primitives (Button, Card, Badge, Logo, ...)
 /components/video  # Upload form, player, status badge
 /components/social # Follow/like/share buttons
+/components/admin  # Admin nav
 /lib
   /db           # Drizzle schema + Neon/Redis clients
   /token        # TokenLedger interface + implementation (DECISION 0 - swappable for on-chain later)
@@ -81,8 +88,11 @@ npm run db:studio      # Drizzle Studio - browse the database
   /video        # Mux client wrapper (direct upload, webhook helpers)
   /creators     # Creator profile server actions
   /social       # Follow/like/comment server actions
+  /feed         # Curated feed query (Redis-cached, admin-ranked)
+  /admin        # requireAdmin guard + curation/moderation server actions
+  /events       # Analytics instrumentation (internal events table + PostHog)
 /drizzle        # Generated SQL migrations
-/scripts        # One-off build scripts (icon generation)
+/scripts        # One-off build scripts (icon generation, admin promotion)
 ```
 
 ## Deploying
@@ -99,7 +109,9 @@ inert. To make them real: `vercel env rm <NAME> production` then
 `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET`, `MUX_WEBHOOK_SECRET` - then
 `vercel deploy --prod`. Neon and Upstash both have first-party Vercel
 integrations that can wire the connection strings for you automatically
-instead.
+instead. `NEXT_PUBLIC_POSTHOG_KEY` is optional - unset, PostHog capture
+is a real no-op (see `lib/events/track.ts`) and the internal `events`
+table (used by `/admin/metrics`) still works fully either way.
 
 ## Design system
 
@@ -115,5 +127,5 @@ Bricolage Grotesque, body is Inter. See `app/globals.css` for tokens and
 - [x] **M1** - Marketing site (landing page, creator waitlist, share metadata).
 - [x] **M2** - Creator pages, video (Mux), free social.
 - [x] **M3** - Token economy (internal ledger) + creator dashboard.
-- [ ] **M4** - Curated feed, admin, instrumentation.
+- [x] **M4** - Curated feed, admin, instrumentation.
 - [ ] **M5** - *Deferred.* On-chain settlement (Solana) + real fiat. Not started.

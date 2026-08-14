@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db/client";
 import { creators, videos } from "@/lib/db/schema";
 import { createDirectUpload } from "@/lib/video/mux";
+import { trackEvent } from "@/lib/events/track";
 
 const bodySchema = z.object({
   title: z.string().trim().max(200).optional(),
@@ -56,6 +57,8 @@ export async function POST(request: Request) {
   const upload = await createDirectUpload(video.id);
 
   await db.update(videos).set({ muxUploadId: upload.id }).where(eq(videos.id, video.id));
+
+  await trackEvent({ name: "video_upload_started", userId: session.user.id, properties: { videoId: video.id } });
 
   return NextResponse.json({ videoId: video.id, uploadUrl: upload.url });
 }

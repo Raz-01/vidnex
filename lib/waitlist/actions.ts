@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "@/lib/db/client";
 import { creatorWaitlist } from "@/lib/db/schema";
 import { publicFormRatelimit } from "@/lib/db/redis";
+import { trackEvent } from "@/lib/events/track";
 
 const waitlistSchema = z.object({
   name: z.string().trim().min(1, "required").max(120),
@@ -45,6 +46,8 @@ export async function joinCreatorWaitlist(formData: FormData) {
     .insert(creatorWaitlist)
     .values({ name, email, primaryLink, note: note || null })
     .onConflictDoNothing({ target: creatorWaitlist.email });
+
+  await trackEvent({ name: "waitlist_joined", anonymousId: email });
 
   redirect("/creators/thanks");
 }

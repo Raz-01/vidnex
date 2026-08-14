@@ -10,6 +10,7 @@ import { users } from "@/lib/db/schema";
 import { claimReward } from "./earn";
 import { boostVideo, cancelMembership, simulateCashout, subscribeMembership, supportCreator, unlockAccess } from "./spend";
 import { BOOST_PRESETS, SUPPORT_PRESETS } from "./policy";
+import { trackEvent } from "@/lib/events/track";
 
 function errorCode(err: unknown): string {
   return err instanceof Error ? err.message : "unknown";
@@ -27,6 +28,9 @@ export async function claimEarnReward() {
   if (!user?.isVerifiedHuman) redirect("/rewards?error=not_verified");
 
   const result = await claimReward(session.user.id, true);
+  if (result.amount > 0) {
+    await trackEvent({ name: "earn_claimed", userId: session.user.id, properties: { amount: result.amount } });
+  }
   revalidatePath("/rewards");
   redirect(`/rewards?claimed=${result.amount}`);
 }
@@ -54,6 +58,11 @@ export async function tipCreator(formData: FormData) {
   } catch (err) {
     redirect(`/watch/${parsed.data.videoId}?error=${errorCode(err)}`);
   }
+  await trackEvent({
+    name: "support_sent",
+    userId: session.user.id,
+    properties: { creatorId: parsed.data.creatorId, videoId: parsed.data.videoId, amount: parsed.data.amount },
+  });
 
   revalidatePath(`/watch/${parsed.data.videoId}`);
   redirect(`/watch/${parsed.data.videoId}?tipped=${parsed.data.amount}`);
@@ -82,6 +91,11 @@ export async function boostVideoAction(formData: FormData) {
   } catch (err) {
     redirect(`/watch/${parsed.data.videoId}?error=${errorCode(err)}`);
   }
+  await trackEvent({
+    name: "boost_sent",
+    userId: session.user.id,
+    properties: { creatorId: parsed.data.creatorId, videoId: parsed.data.videoId, amount: parsed.data.amount },
+  });
 
   revalidatePath(`/watch/${parsed.data.videoId}`);
   redirect(`/watch/${parsed.data.videoId}?boosted=${parsed.data.amount}`);
@@ -100,6 +114,7 @@ export async function unlockVideoAccess(formData: FormData) {
   } catch (err) {
     redirect(`/watch/${parsed.data}?error=${errorCode(err)}`);
   }
+  await trackEvent({ name: "access_unlocked", userId: session.user.id, properties: { videoId: parsed.data } });
 
   revalidatePath(`/watch/${parsed.data}`);
   redirect(`/watch/${parsed.data}?unlocked=1`);
@@ -119,6 +134,7 @@ export async function joinMembership(formData: FormData) {
   } catch (err) {
     redirect(`/${handle}?error=${errorCode(err)}`);
   }
+  await trackEvent({ name: "membership_joined", userId: session.user.id, properties: { creatorId: parsed.data } });
 
   revalidatePath(`/${handle}`);
   redirect(`/${handle}?joined=1`);
@@ -134,6 +150,7 @@ export async function leaveMembership(formData: FormData) {
   if (!parsed.success) redirect(`/${handle}?error=invalid`);
 
   await cancelMembership({ userId: session.user.id, creatorId: parsed.data });
+  await trackEvent({ name: "membership_canceled", userId: session.user.id, properties: { creatorId: parsed.data } });
   revalidatePath(`/${handle}`);
   redirect(`/${handle}?left=1`);
 }

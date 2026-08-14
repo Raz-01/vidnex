@@ -15,6 +15,13 @@
       "when": 1786736405362,
       "tag": "0001_dry_changeling",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786739702402,
+      "tag": "0002_youthful_starfox",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, primaryKey, boolean } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { creators } from "./creators";
 import { videos } from "./videos";
@@ -47,6 +47,8 @@ export const comments = pgTable("comments", {
     .references(() => videos.id, { onDelete: "cascade" }),
   parentId: uuid("parent_id"),
   body: text("body").notNull(),
+  // Moderation (M4): soft removal, same reasoning as videos.isRemoved.
+  isRemoved: boolean("is_removed").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

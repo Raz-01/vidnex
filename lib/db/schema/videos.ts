@@ -46,6 +46,11 @@ export const videos = pgTable("videos", {
   // sub-linear rather than "tokens = guaranteed reach" (see CLAUDE.md).
   boostScore: integer("boost_score").notNull().default(0),
 
+  // Moderation (M4): a soft removal - hides the video from the public
+  // feed/creator page/watch page without deleting the row (or the Mux
+  // asset), so it stays reversible and auditable. See lib/admin.
+  isRemoved: boolean("is_removed").notNull().default(false),
+
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

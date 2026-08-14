@@ -7,6 +7,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db/client";
 import { comments, creators, follows, likes, videos } from "@/lib/db/schema";
+import { trackEvent } from "@/lib/events/track";
 
 /**
  * Free social - follow, like, comment, share. NON-NEGOTIABLE per CLAUDE.md:
@@ -46,6 +47,7 @@ export async function toggleFollow(creatorId: string): Promise<{ following: bool
       .set({ followerCount: sql`${creators.followerCount} + 1` })
       .where(eq(creators.id, creatorId));
   });
+  await trackEvent({ name: "follow_created", userId, properties: { creatorId } });
   return { following: true };
 }
 
@@ -78,6 +80,7 @@ export async function toggleLike(videoId: string): Promise<{ liked: boolean }> {
       .set({ likeCount: sql`${videos.likeCount} + 1` })
       .where(eq(videos.id, videoId));
   });
+  await trackEvent({ name: "like_created", userId, properties: { videoId } });
   return { liked: true };
 }
 
@@ -97,6 +100,7 @@ export async function addComment(videoId: string, formData: FormData) {
       .set({ commentCount: sql`${videos.commentCount} + 1` })
       .where(eq(videos.id, videoId));
   });
+  await trackEvent({ name: "comment_created", userId: session.user.id, properties: { videoId } });
 
   revalidatePath(`/watch/${videoId}`);
 }

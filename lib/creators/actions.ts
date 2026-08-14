@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db/client";
 import { creators, users } from "@/lib/db/schema";
 import type { CreatorLinks } from "@/lib/db/schema";
+import { trackEvent } from "@/lib/events/track";
 
 const handleSchema = z
   .string()
@@ -89,6 +90,8 @@ export async function createCreatorProfile(formData: FormData) {
     bio: bio || null,
     links: buildLinks({ tiktok, instagram, youtube }),
   });
+
+  await trackEvent({ name: "creator_profile_created", userId: session.user.id, properties: { handle } });
 
   redirect("/studio");
 }

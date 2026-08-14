@@ -2,6 +2,86 @@
 
 Running log of build decisions and why. Newest first.
 
+## M4
+
+**No in-app way to become an admin - `users.isAdmin` is only settable via
+`scripts/promote-admin.mjs`, run directly against the database.** This
+was flagged as the riskiest part of M4 before starting: admin is the
+first surface where one user acts on *other* users' content. A
+self-service "become admin" path (even a hidden one) is a standing
+privilege-escalation risk for as long as it exists in the codebase; a
+script that requires `DATABASE_URL` access has no such surface at all.
+`requireAdmin()` (`lib/admin/require-admin.ts`) is the single gate every
+`/admin` page calls.
+
+**Moderation is a soft `isRemoved` flag on videos/comments, not a hard
+delete.** Reversible ("Restore" is one click) and auditable - matches the
+same reasoning as everywhere else tokens or content state changes in
+this codebase (the ledger itself never deletes rows either). Removed
+videos 404 for everyone, including the owner - moderation is meant to be
+authoritative, not a suggestion the creator can route around.
+
+**The curated feed falls back to newest-first when nothing is
+featured, rather than being empty.** CLAUDE.md calls for
+editorial/admin-ordered curation with no ML recommender - but a feed
+that's blank until an admin manually intervenes is a bad demo and a bad
+new-creator experience on day one. Featured (admin-ranked) videos still
+always sort first; unfeatured ready videos fill the rest by recency. Feed
+reordering is deliberately simple (rank swap via up/down buttons, no
+drag-and-drop) - same reasoning as M3's preset-amounts-not-free-form-input
+call: less UI surface, same outcome, faster to build correctly.
+
+**Feed cache: read-through Redis with a 60s TTL, actively invalidated on
+every admin curation change.** A pure TTL alone would mean an admin's
+reorder doesn't show up for up to a minute, which is a bad demo moment
+("I clicked feature and nothing happened"); actively calling
+`invalidateFeedCache()` after every curation action fixes that while the
+TTL stays as a backstop for the normal case (nobody's curating, cache
+just serves). Both the cache read and the cache write are wrapped in
+try/catch, falling back to a live DB query - a Redis hiccup degrades
+performance, never breaks the page.
+
+**Analytics never throws, unlike every other `lib/` client.** `db`,
+`redis`, and the Mux client all throw at import time if unconfigured -
+deliberately, so a real misconfiguration fails loud at build/boot rather
+than silently. `lib/events/track.ts` is the one exception: an unset
+`NEXT_PUBLIC_POSTHOG_KEY` is a real no-op, not an error, because
+analytics failing must never be able to break the user-facing action
+that triggered it (a tip should still succeed even if the PostHog call
+or the events-table write fails). Both write paths are wrapped in
+try/catch with a `console.error`, nothing more.
+
+**Metrics page has no charts, just stat tiles.** CLAUDE.md's acceptance
+bar is "a metrics view shows the numbers you'd put in a pitch deck" -
+real pitch decks are usually big numbers on a slide, not embedded chart
+libraries. Numbers-in-cards reuses the existing `Card` primitive with
+zero new dependencies and no risk of a chart looking bad with the
+near-empty dataset a fresh deploy actually has right now.
+
+**Retention is a proxy metric (7-day active / total users, from the
+`events` table), not a real cohort analysis.** A defensible MVP number
+requires actual usage data to compute meaningfully anyway - this metric
+will show real, correct values once there's real traffic; building
+proper cohort retention analysis for a dataset that's currently all
+zeros isn't where the effort belongs yet.
+
+**Bug caught in verification: `/feed` needed an explicit
+`export const dynamic = "force-dynamic"`, not just SiteHeader's `auth()`
+call, to avoid taking down the entire build.** `/feed` is a plain static
+path (no `[param]` segment, no auth-gate redirect) whose first async
+operation is a DB read via `getFeed()`. `next build` tried to statically
+prerender it, that DB read hit the placeholder `DATABASE_URL` and threw,
+and - unlike a route where a dynamic API (`auth()`, `cookies()`,
+`searchParams`) executes *before* any failing call - Next had no signal
+yet that this route needed to be dynamic, so it treated the prerender
+failure as a hard build error instead of falling back to
+server-rendered-on-demand. Every other page that touches the DB either
+has a dynamic route segment or reads a dynamic API (an auth redirect
+check, `searchParams`) before its first query, which is why this didn't
+surface anywhere else. Lesson: a public page with no auth-gate whose
+first move is a data fetch needs `dynamic = "force-dynamic"` stated
+explicitly, not inferred.
+
 ## M3
 
 **DECISION 0 confirmed: token stays an internal ledger for the MVP.** No

@@ -17,6 +17,12 @@ export async function SiteHeader() {
           <Logo />
         </Link>
         <nav className="flex items-center gap-3">
+          <Link
+            href="/feed"
+            className="hidden sm:inline text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+          >
+            Feed
+          </Link>
           {session?.user ? (
             <>
               <Link
