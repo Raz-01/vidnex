@@ -31,6 +31,10 @@ const updateProfileSchema = z.object({
   tiktok: linkField,
   instagram: linkField,
   youtube: linkField,
+  membershipPriceTokens: z.preprocess(
+    (v) => (v === "" || v === null ? undefined : v),
+    z.coerce.number().int().positive().optional(),
+  ),
 });
 
 function buildLinks(input: { tiktok?: string; instagram?: string; youtube?: string }): CreatorLinks {
@@ -99,10 +103,11 @@ export async function updateCreatorProfile(formData: FormData) {
     tiktok: formData.get("tiktok"),
     instagram: formData.get("instagram"),
     youtube: formData.get("youtube"),
+    membershipPriceTokens: formData.get("membershipPriceTokens"),
   });
   if (!parsed.success) redirect("/studio/profile?error=invalid");
 
-  const { displayName, bio, tiktok, instagram, youtube } = parsed.data;
+  const { displayName, bio, tiktok, instagram, youtube, membershipPriceTokens } = parsed.data;
 
   await db
     .update(creators)
@@ -110,6 +115,7 @@ export async function updateCreatorProfile(formData: FormData) {
       displayName,
       bio: bio || null,
       links: buildLinks({ tiktok, instagram, youtube }),
+      membershipPriceTokens: membershipPriceTokens ?? null,
       updatedAt: new Date(),
     })
     .where(eq(creators.userId, session.user.id));

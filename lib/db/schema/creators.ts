@@ -32,9 +32,17 @@ export const creators = pgTable("creators", {
   isVerified: boolean("is_verified").notNull().default(false),
 
   // Denormalized counters, updated by application logic (kept in sync via
-  // the same transaction as the underlying like/follow/token event).
+  // the same transaction as the underlying like/follow event).
   followerCount: integer("follower_count").notNull().default(0),
+  // NOT populated as of M3 - token balance reads go straight through
+  // tokenLedger.getBalance({ type: "creator", id }) (the ledger IS the
+  // source of truth). Wire this as a synced cache only if dashboard read
+  // latency ever actually needs it.
   tokenBalance: integer("token_balance").notNull().default(0),
+
+  // Membership (M3): null = this creator doesn't offer one. Recurring
+  // period length is fixed MVP-wide (see lib/token/policy.ts).
+  membershipPriceTokens: integer("membership_price_tokens"),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

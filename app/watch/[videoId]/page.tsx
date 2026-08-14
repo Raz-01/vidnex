@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { and, desc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db/client";
-import { comments, creators, follows, likes, users, videos } from "@/lib/db/schema";
+import { accessUnlocks, comments, creators, follows, likes, users, videos } from "@/lib/db/schema";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { VideoPlayer } from "@/components/video/video-player";
@@ -15,6 +16,8 @@ import { FollowButton } from "@/components/social/follow-button";
 import { LikeButton } from "@/components/social/like-button";
 import { ShareButton } from "@/components/social/share-button";
 import { addComment } from "@/lib/social/actions";
+import { tipCreator, boostVideoAction, unlockVideoAccess } from "@/lib/token/actions";
+import { SUPPORT_PRESETS, BOOST_PRESETS } from "@/lib/token/policy";
 
 async function getVideo(videoId: string) {
   const [row] = await db
@@ -43,7 +46,18 @@ export async function generateMetadata({
   };
 }
 
-export default async function WatchPage({ params }: { params: Promise<{ videoId: string }> }) {
+const SPEND_ERROR_MESSAGES: Record<string, string> = {
+  insufficient_balance: "Not enough tokens for that - visit Rewards to earn more.",
+  invalid: "Something went wrong with that request.",
+};
+
+export default async function WatchPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ videoId: string }>;
+  searchParams: Promise<{ tipped?: string; boosted?: string; unlocked?: string; error?: string }>;
+}) {
   const { videoId } = await params;
   const row = await getVideo(videoId);
   if (!row) notFound();
@@ -53,7 +67,9 @@ export default async function WatchPage({ params }: { params: Promise<{ videoId:
 
   if (row.video.status !== "ready" && !isOwner) notFound();
 
-  const [isLiked, isFollowing, commentRows] = await Promise.all([
+  const { tipped, boosted, unlocked, error } = await searchParams;
+
+  const [isLiked, isFollowing, hasUnlocked, commentRows] = await Promise.all([
     session?.user
       ? db
           .select({ userId: likes.userId })
@@ -70,6 +86,14 @@ export default async function WatchPage({ params }: { params: Promise<{ videoId:
           .limit(1)
           .then((r) => r.length > 0)
       : Promise.resolve(false),
+    session?.user
+      ? db
+          .select({ userId: accessUnlocks.userId })
+          .from(accessUnlocks)
+          .where(and(eq(accessUnlocks.userId, session.user.id), eq(accessUnlocks.videoId, videoId)))
+          .limit(1)
+          .then((r) => r.length > 0)
+      : Promise.resolve(false),
     db
       .select({ comment: comments, name: users.name })
       .from(comments)
@@ -80,6 +104,8 @@ export default async function WatchPage({ params }: { params: Promise<{ videoId:
   ]);
 
   const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/watch/${videoId}`;
+  const locked = row.video.isExclusive && !isOwner && !hasUnlocked;
+  const errorMessage = error ? (SPEND_ERROR_MESSAGES[error] ?? SPEND_ERROR_MESSAGES.invalid) : null;
 
   return (
     <>
@@ -98,12 +124,46 @@ export default async function WatchPage({ params }: { params: Promise<{ videoId:
           ) : (
             <div className="grid lg:grid-cols-[minmax(0,26rem)_1fr] gap-8 items-start">
               <div className="mx-auto w-full max-w-sm">
-                <VideoPlayer
-                  playbackId={row.video.muxPlaybackId!}
-                  title={row.video.title}
-                  thumbnailUrl={row.video.thumbnailUrl}
-                  autoPlay
-                />
+                {locked ? (
+                  <div
+                    className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-canvas-overlay flex flex-col items-center justify-center gap-4 text-center p-6"
+                    style={
+                      row.video.thumbnailUrl
+                        ? {
+                            backgroundImage: `linear-gradient(rgba(11,10,14,0.75), rgba(11,10,14,0.9)), url(${row.video.thumbnailUrl})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }
+                        : undefined
+                    }
+                  >
+                    <Badge tone="token">Exclusive</Badge>
+                    <p className="text-ink-muted text-sm max-w-[220px]">
+                      This video is a token-gated drop from {row.creator.displayName}.
+                    </p>
+                    {session?.user ? (
+                      <form action={unlockVideoAccess}>
+                        <input type="hidden" name="videoId" value={videoId} />
+                        <Button type="submit" variant="token" size="md">
+                          Unlock for {row.video.accessPriceTokens} tokens
+                        </Button>
+                      </form>
+                    ) : (
+                      <Link href="/login">
+                        <Button type="button" variant="token" size="md">
+                          Sign in to unlock
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                ) : (
+                  <VideoPlayer
+                    playbackId={row.video.muxPlaybackId!}
+                    title={row.video.title}
+                    thumbnailUrl={row.video.thumbnailUrl}
+                    autoPlay
+                  />
+                )}
               </div>
 
               <div>
@@ -142,6 +202,68 @@ export default async function WatchPage({ params }: { params: Promise<{ videoId:
                   <ShareButton url={shareUrl} title={row.video.title || row.creator.displayName} />
                 </div>
 
+                {(tipped || boosted || unlocked) && (
+                  <p className="mt-4 rounded-lg bg-success/10 px-4 py-3 text-sm text-success">
+                    {tipped && `Tipped ${tipped} tokens - thank you!`}
+                    {boosted && `Boosted with ${boosted} tokens.`}
+                    {unlocked && "Unlocked!"}
+                  </p>
+                )}
+                {errorMessage && (
+                  <p className="mt-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger">
+                    {errorMessage}
+                  </p>
+                )}
+
+                {!isOwner && session?.user && (
+                  <div className="mt-6 grid sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-border p-4">
+                      <p className="text-sm font-medium mb-2">Support</p>
+                      <form action={tipCreator} className="flex flex-wrap gap-2">
+                        <input type="hidden" name="creatorId" value={row.creator.id} />
+                        <input type="hidden" name="videoId" value={videoId} />
+                        {SUPPORT_PRESETS.map((amount) => (
+                          <button
+                            key={amount}
+                            type="submit"
+                            name="amount"
+                            value={amount}
+                            className="h-9 px-3 rounded-full text-sm font-semibold bg-flame text-white hover:brightness-110"
+                          >
+                            {amount}
+                          </button>
+                        ))}
+                      </form>
+                    </div>
+                    <div className="rounded-xl border border-border p-4">
+                      <p className="text-sm font-medium mb-2">Boost</p>
+                      <form action={boostVideoAction} className="flex flex-wrap gap-2">
+                        <input type="hidden" name="creatorId" value={row.creator.id} />
+                        <input type="hidden" name="videoId" value={videoId} />
+                        {BOOST_PRESETS.map((amount) => (
+                          <button
+                            key={amount}
+                            type="submit"
+                            name="amount"
+                            value={amount}
+                            className="h-9 px-3 rounded-full text-sm font-semibold bg-token text-[#241900] hover:brightness-105"
+                          >
+                            {amount}
+                          </button>
+                        ))}
+                      </form>
+                    </div>
+                  </div>
+                )}
+                {!session?.user && (
+                  <p className="mt-6 text-sm text-ink-muted">
+                    <Link href="/login" className="text-coral hover:underline">
+                      Sign in
+                    </Link>{" "}
+                    to support, boost, or comment.
+                  </p>
+                )}
+
                 <h2 className="mt-8 font-display font-bold">
                   Comments <span className="text-ink-faint">({row.video.commentCount})</span>
                 </h2>
@@ -159,14 +281,7 @@ export default async function WatchPage({ params }: { params: Promise<{ videoId:
                       Post
                     </Button>
                   </form>
-                ) : (
-                  <p className="mt-4 text-sm text-ink-muted">
-                    <Link href="/login" className="text-coral hover:underline">
-                      Sign in
-                    </Link>{" "}
-                    to comment.
-                  </p>
-                )}
+                ) : null}
 
                 <div className="mt-6 grid gap-4">
                   {commentRows.map(({ comment, name }) => (

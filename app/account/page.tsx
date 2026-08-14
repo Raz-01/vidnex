@@ -1,15 +1,18 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth/config";
+import { tokenLedger } from "@/lib/token/db-ledger";
 import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { Badge } from "@/components/ui/badge";
 
 export default async function AccountPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const balance = await tokenLedger.getBalance({ type: "user", id: session.user.id });
 
   return (
     <main className="flex-1 flex items-center justify-center py-16">
@@ -37,10 +40,17 @@ export default async function AccountPage() {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between rounded-xl bg-canvas-overlay px-4 py-3">
+          <Link
+            href="/rewards"
+            className="mt-6 flex items-center justify-between rounded-xl bg-canvas-overlay px-4 py-3 hover:bg-canvas-raised transition-colors"
+          >
             <span className="text-sm text-ink-muted">Token balance</span>
-            <Badge tone="token">0 · Earn coming in M3</Badge>
-          </div>
+            <Badge tone="token">{balance}</Badge>
+          </Link>
+
+          <LinkButton href="/studio" variant="secondary" className="mt-3 w-full">
+            Creator studio
+          </LinkButton>
 
           <form
             className="mt-6"

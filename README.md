@@ -7,20 +7,20 @@ full product brief, [DECISIONS.md](./DECISIONS.md) for build decisions, and
 [TOKENOMICS.md](./TOKENOMICS.md) for the token model.
 
 This repo is built in milestones (**M0 → M4**), each deployable and
-demoable on its own. Current status: **M2 - Creator pages, video, free
-social**.
+demoable on its own. Current status: **M3 - Token economy + creator
+dashboard**.
 
 **Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) - landing
 page, [/creators](https://vidnex-chi.vercel.app/creators) waitlist, and
 login UI are all live. Auth (Google/email), DB writes (waitlist, creator
-profiles), and video upload/playback (Mux) are **not yet functional in
-production**: the deploy runs on placeholder Neon/Upstash/Google/Resend/Mux
-credentials so the build succeeds; swap in real ones (see below) to light
-those up. One consequence worth knowing: pages that unconditionally read
-the DB on every request (`/[handle]`, `/watch/[id]`) currently 500 instead
-of 404ing on an unknown handle/video, because the placeholder
-`DATABASE_URL` host doesn't resolve at all - a real Neon connection fixes
-this too.
+profiles, the whole token economy), and video upload/playback (Mux) are
+**not yet functional in production**: the deploy runs on placeholder
+Neon/Upstash/Google/Resend/Mux credentials so the build succeeds; swap in
+real ones (see below) to light those up. One consequence worth knowing:
+pages that unconditionally read the DB on every request (`/[handle]`,
+`/watch/[id]`) currently 500 instead of 404ing on an unknown
+handle/video, because the placeholder `DATABASE_URL` host doesn't
+resolve at all - a real Neon connection fixes this too.
 
 ## Stack
 
@@ -114,6 +114,6 @@ Bricolage Grotesque, body is Inter. See `app/globals.css` for tokens and
 - [x] **M0** - Scaffold, design system, auth, schema, PWA shell.
 - [x] **M1** - Marketing site (landing page, creator waitlist, share metadata).
 - [x] **M2** - Creator pages, video (Mux), free social.
-- [ ] **M3** - Token economy (internal ledger) + creator dashboard.
+- [x] **M3** - Token economy (internal ledger) + creator dashboard.
 - [ ] **M4** - Curated feed, admin, instrumentation.
 - [ ] **M5** - *Deferred.* On-chain settlement (Solana) + real fiat. Not started.

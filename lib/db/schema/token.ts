@@ -18,20 +18,22 @@ export const ledgerAccountTypeEnum = pgEnum("ledger_account_type", [
   "user", // a spender's wallet
   "creator", // a creator's earnings balance
   "treasury", // discovery treasury (Boost's non-creator split)
+  "void", // outside the ledger entirely - where earn is minted from and burns/cash-outs go
 ]);
 
 export const ledgerEntryTypeEnum = pgEnum("ledger_entry_type", [
-  "earn", // capped/diminishing participation reward -> user
+  "earn", // capped/diminishing participation reward (credit user)
+  "earn_emission", // matching mint for an earn payout (debit void)
   "support_out", // user tips a creator (debit user)
   "support_in", // creator receives a tip (credit creator)
   "access_out", // user unlocks exclusive content (debit user)
-  "access_burn", // matching burn/lock of an access spend (no credit account)
+  "access_burn", // matching burn of an access spend (credit void - removed from circulation)
   "boost_out", // user spends to boost a video (debit user)
   "boost_creator_in", // creator's share of a boost (credit creator)
   "boost_treasury_in", // discovery treasury's share of a boost (credit treasury)
   "membership_out", // user pays a recurring membership (debit user)
   "membership_in", // creator receives membership revenue (credit creator)
-  "cashout_simulated", // creator "cashes out" - simulated/manual, clearly labelled, no real payout
+  "cashout_simulated", // creator "cashes out" - simulated/manual, clearly labelled, no real payout (credit void)
   "adjustment", // manual/admin correction, always requires a note
 ]);
 
@@ -44,7 +46,7 @@ export const tokenLedgerEntries = pgTable(
     transferId: uuid("transfer_id").notNull(),
 
     accountType: ledgerAccountTypeEnum("account_type").notNull(),
-    // Null only for the singleton treasury account.
+    // Null only for the singleton treasury/void accounts.
     accountId: uuid("account_id"),
 
     entryType: ledgerEntryTypeEnum("entry_type").notNull(),

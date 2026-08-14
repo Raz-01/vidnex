@@ -12,19 +12,25 @@ Rust/Anchor/Solana settlement layer (M5) can implement the same
   exported as a ready-to-use singleton `tokenLedger`. Provides the
   accounting primitives: balanced `transfer()`, `getBalance()`,
   `listEntries()`.
+- `policy.ts` - the provisional MVP constants (earn curve, boost split,
+  presets). **Not final tokenomics** - see the header comment there.
+- `earn.ts` - the capped/diminishing, human-gated Earn claim.
+- `spend.ts` - the four spend utilities: Support, Access, Boost, Membership
+  (plus a creator's simulated cash-out). Each is one or more calls to
+  `tokenLedger.transfer()` with the right `entryType`s and legs.
+- `actions.ts` - `"use server"` wrappers around `earn.ts`/`spend.ts` for use
+  directly from pages/components (auth, validation, redirects).
 
-## What's here in M0 vs. what M3 builds
+## Four accounts, not three
 
-M0 ships the **primitives** (a generic, balanced, idempotent, auditable
-transfer mechanism) so the schema and interface are settled early. M3 builds
-the **policy** on top of these primitives:
-
-- Capped/diminishing, human-gated **Earn** (`lib/token/earn.ts`, TBD in M3).
-- The four spend utilities - **Support, Access, Boost, Membership**
-  (`lib/token/spend.ts`, TBD in M3) - each of which is just one or more
-  calls to `tokenLedger.transfer()` with the right `entryType`s and legs.
-- Creator balance + dashboard reads (`tokenLedger.getBalance({ type:
-  "creator", id })`).
+Every ledger entry belongs to a `user`, a `creator`, the `treasury`
+(Boost's non-creator split), or `void` - a fourth, singleton account added
+in M3 representing "outside the ledger entirely." Earn mints tokens by
+debiting `void` and crediting the user; a burn (Access) or a simulated
+cash-out does the reverse, crediting `void`. This keeps every emission and
+every removal auditable as a normal balanced transfer instead of a special
+unbalanced case - `void`'s own balance is a running "net tokens minted"
+figure, which is a useful sanity check on its own.
 
 ## Example: a Support (tip) transfer
 
@@ -38,6 +44,15 @@ await tokenLedger.transfer({
 });
 ```
 
-Legs must sum to zero - a spend always lands somewhere (a creator, or the
-discovery treasury for Boost's split). `transfer()` is safe to retry with
-the same `idempotencyKey`.
+Legs must sum to zero - a spend always lands somewhere (a creator, the
+discovery treasury for Boost's split, or `void` for a burn/cash-out).
+`transfer()` is safe to retry with the same `idempotencyKey`.
+
+## Known limitation: no transactional balance check
+
+`spend.ts` reads a balance, checks it's sufficient, then writes the
+transfer as a separate step - there's a narrow race where two concurrent
+spends from the same account could both pass the check before either
+writes, landing the balance negative. Acceptable for an MVP demo (single
+user, not concurrently self-spending); worth closing with a DB-level
+constraint or a serializable transaction before this handles real money.

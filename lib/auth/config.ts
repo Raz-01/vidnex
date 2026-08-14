@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema";
 
@@ -33,6 +34,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, user }) {
       if (session.user) session.user.id = user.id;
       return session;
+    },
+  },
+  events: {
+    // Human-gating for Earn (see lib/token/earn.ts): both providers imply
+    // a verified email by the time sign-in succeeds (Google always, Resend
+    // via the magic-link click), so this is the conservative MVP proxy for
+    // "one human = one earner" from TOKENOMICS.md. Idempotent - safe to
+    // run on every sign-in, not just the first.
+    async signIn({ user }) {
+      if (user.id) {
+        await db.update(users).set({ isVerifiedHuman: true }).where(eq(users.id, user.id));
+      }
     },
   },
 });

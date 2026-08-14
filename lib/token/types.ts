@@ -1,14 +1,17 @@
 import type { TokenLedgerEntry } from "@/lib/db/schema";
 
-export type LedgerAccountType = "user" | "creator" | "treasury";
+export type LedgerAccountType = "user" | "creator" | "treasury" | "void";
 
 export type LedgerEntryType = TokenLedgerEntry["entryType"];
 
 export interface LedgerAccount {
   type: LedgerAccountType;
-  /** Null only for the singleton treasury account. */
+  /** Null only for the singleton treasury/void accounts. */
   id: string | null;
 }
+
+/** The singleton account earn is minted from and burns/cash-outs land in. */
+export const VOID_ACCOUNT: LedgerAccount = { type: "void", id: null };
 
 /** One leg of a transfer - a single debit or credit row. */
 export interface LedgerLeg {

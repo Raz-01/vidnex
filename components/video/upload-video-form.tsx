@@ -15,13 +15,24 @@ type UploadState =
 
 export function UploadVideoForm() {
   const [state, setState] = useState<UploadState>({ phase: "idle" });
+  const [title, setTitle] = useState("");
+  const [isExclusive, setIsExclusive] = useState(false);
+  const [price, setPrice] = useState("20");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   async function handleFile(file: File) {
     setState({ phase: "starting" });
     try {
-      const res = await fetch("/api/videos/upload-url", { method: "POST" });
+      const res = await fetch("/api/videos/upload-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title || undefined,
+          isExclusive,
+          accessPriceTokens: isExclusive ? Number(price) || undefined : undefined,
+        }),
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.message ?? "Couldn't start the upload.");
@@ -47,21 +58,65 @@ export function UploadVideoForm() {
   return (
     <Card>
       {state.phase === "idle" && (
-        <div className="text-center py-8">
-          <p className="text-ink-muted mb-4">Choose a vertical video to upload.</p>
-          <input
-            ref={inputRef}
-            type="file"
-            accept="video/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFile(file);
-            }}
-          />
-          <Button type="button" size="lg" onClick={() => inputRef.current?.click()}>
-            Choose video
-          </Button>
+        <div className="py-2">
+          <div className="grid gap-4">
+            <div className="grid gap-1.5">
+              <label htmlFor="title" className="text-sm font-medium text-ink-muted">
+                Title <span className="text-ink-faint">(optional)</span>
+              </label>
+              <input
+                id="title"
+                value={title}
+                maxLength={200}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="What's the video about?"
+                className="h-11 rounded-xl border border-border bg-canvas px-4 text-sm text-ink placeholder:text-ink-faint outline-none focus-visible:outline-2 focus-visible:outline-coral"
+              />
+            </div>
+
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={isExclusive}
+                onChange={(e) => setIsExclusive(e.target.checked)}
+                className="h-4 w-4 accent-coral"
+              />
+              Make this a paid unlock (Access)
+            </label>
+
+            {isExclusive && (
+              <div className="grid gap-1.5">
+                <label htmlFor="price" className="text-sm font-medium text-ink-muted">
+                  Unlock price (tokens)
+                </label>
+                <input
+                  id="price"
+                  type="number"
+                  min={1}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="h-11 w-32 rounded-xl border border-border bg-canvas px-4 text-sm text-ink outline-none focus-visible:outline-2 focus-visible:outline-coral"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="text-center py-8">
+            <p className="text-ink-muted mb-4">Choose a vertical video to upload.</p>
+            <input
+              ref={inputRef}
+              type="file"
+              accept="video/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFile(file);
+              }}
+            />
+            <Button type="button" size="lg" onClick={() => inputRef.current?.click()}>
+              Choose video
+            </Button>
+          </div>
         </div>
       )}
 

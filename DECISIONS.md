@@ -2,6 +2,89 @@
 
 Running log of build decisions and why. Newest first.
 
+## M3
+
+**DECISION 0 confirmed: token stays an internal ledger for the MVP.** No
+pushback when asked - proceeding as designed since M0. See TOKENOMICS.md
+and `lib/token/README.md` for the implementation.
+
+**Added a fourth ledger account type, `void`, rather than leaving Earn and
+burns as unbalanced special cases.** The M0 schema had `entryType: "earn"`
+and `"access_burn"` as if they were single-sided - but `tokenLedger.transfer()`
+requires legs to sum to zero, and a real accounting ledger needs a
+counterparty for "tokens appeared" or "tokens disappeared" events. `void`
+is that counterparty: Earn mints by debiting it, Access burns and
+simulated cash-outs credit it. Keeps every row balanced and auditable
+with no exception carved out in the primitive itself; `void`'s own
+balance becomes a free "net tokens minted" sanity check as a side effect.
+
+**Earn has no wall-clock cooldown - the diminishing curve alone bounds
+it.** A daily-claim design is more realistic long-term, but makes the
+mechanic nearly undemoable live (an investor can't wait 24 hours between
+clicks to see "diminishing returns" happen). Letting a user claim
+repeatedly with each claim paying strictly less, capped at 500 lifetime
+claims, is still genuinely capped and diminishing per CLAUDE.md, and is a
+*better* demo of the mechanic than a hidden timer - the number visibly
+shrinks toward zero in front of whoever's watching. Idempotency
+(`earn:{userId}:{claimCount}`) still guards against a double network
+retry double-granting one claim.
+
+**Boost's discovery bump is `sqrt(amount)`-scaled, not linear.** Direct
+implementation of CLAUDE.md's "bounded, diminishing-returns discovery -
+NOT tokens = guaranteed reach, to avoid the Steemit vote-buying trap."
+`videos.boostScore` isn't consumed by any ranking yet (the curated feed
+is M4, editorial/admin-ordered by design) - this just lands the honest
+shape of the signal now so M4 doesn't inherit a linear one.
+
+**Support/Boost/Membership use preset amounts, not free-form input.**
+Keeps the spend UI to a row of buttons (no numeric-input validation
+surface, no "let me try to break the ledger with -50") and keeps the
+demo tight. `lib/token/policy.ts` has the exact presets; revisit if
+free-form ever becomes a real product need.
+
+**Creator profiles remain self-serve and unverified by default (M2's
+decision), separate from Support/Access/Boost/Membership being fully
+live for any self-serve creator.** TOKENOMICS.md's "creator-side
+verification" is about the real launch funnel (the M1 waitlist); gating
+the token utilities themselves behind manual verification would make M3
+undemoable without an admin approving accounts first, and CLAUDE.md's
+M3 acceptance bar is explicitly "the whole loop is demoable end-to-end."
+`creators.isVerified` still exists and still means something (a "Verified"
+badge) - it just isn't a spend gate.
+
+**`creators.tokenBalance` stays unpopulated; every balance read goes
+through `tokenLedger.getBalance()` live.** The column exists in the M0
+schema as a future cache, but keeping it synced correctly under every
+credit/debit path is real complexity an MVP-scale app (hundreds of rows,
+not millions) doesn't need yet. Correctness over a premature
+optimization; wire it later only if dashboard read latency is an actual
+measured problem.
+
+**Known, documented gap: spend functions check balance then write the
+transfer as two separate steps, not one atomic operation.** A narrow
+race exists if the same account spends from two concurrent requests at
+once. Acceptable for a single-user demo; would need a DB-level
+constraint or a serializable transaction before this ever handles a
+real concurrent-user load. Written up in `lib/token/README.md` so it
+isn't forgotten.
+
+**Human-gating for Earn: `users.isVerifiedHuman` is set on every
+successful sign-in**, not via a separate verification step, since both
+Auth.js providers (Google, Resend magic link) already imply a verified
+email by the time sign-in succeeds. Explicitly a weak, conservative MVP
+proxy - doesn't stop one person running multiple accounts - matching
+CLAUDE.md's "start conservative" instruction rather than building real
+uniqueness infrastructure this milestone doesn't need.
+
+**Accepted a build-time regression: `/` went from a static page to a
+dynamic one.** `SiteHeader` now calls `auth()` to decide what to show
+(balance pill vs. "Join the waitlist"), and it's used on the landing
+page, so Next.js can no longer prerender `/` at build time. Real
+session-aware navigation is worth more than static-shell caching on the
+landing page for an MVP demo; if this becomes an actual perf problem,
+the fix is making the balance pill a small client island that fetches
+after hydration instead of gating the whole header server-side.
+
 **Corrected brand positioning: "the digital home for entertainment
 culture," not "for African entertainment" - Africa/Afrobeats is the
 launch scene, not the permanent identity.** The founder flagged that the

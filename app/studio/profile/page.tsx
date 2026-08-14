@@ -94,6 +94,20 @@ export default async function EditProfilePage({
                   className="h-11 rounded-xl border border-border bg-canvas px-4 text-sm text-ink placeholder:text-ink-faint outline-none focus-visible:outline-2 focus-visible:outline-coral"
                 />
               </div>
+              <div className="grid gap-1.5">
+                <label htmlFor="membershipPriceTokens" className="text-sm font-medium text-ink-muted">
+                  Membership price <span className="text-ink-faint">(tokens/month, optional)</span>
+                </label>
+                <input
+                  id="membershipPriceTokens"
+                  name="membershipPriceTokens"
+                  type="number"
+                  min={1}
+                  placeholder="Leave blank to not offer membership"
+                  defaultValue={creator.membershipPriceTokens ?? ""}
+                  className="h-11 w-48 rounded-xl border border-border bg-canvas px-4 text-sm text-ink placeholder:text-ink-faint outline-none focus-visible:outline-2 focus-visible:outline-coral"
+                />
+              </div>
               <Button type="submit" size="lg" className="mt-2">
                 Save changes
               </Button>
