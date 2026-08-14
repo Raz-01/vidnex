@@ -26,3 +26,11 @@ export const defaultRatelimit = new Ratelimit({
   analytics: true,
   prefix: "ratelimit:default",
 });
+
+/** Tighter limit for unauthenticated public forms (e.g. the creator waitlist). */
+export const publicFormRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "10 m"),
+  analytics: true,
+  prefix: "ratelimit:public-form",
+});

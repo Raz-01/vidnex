@@ -6,3 +6,4 @@ export * from "./social";
 export * from "./token";
 export * from "./memberships";
 export * from "./events";
+export * from "./waitlist";

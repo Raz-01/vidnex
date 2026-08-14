@@ -1,9 +1,34 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
-import { Logo } from "@/components/ui/logo";
 import { LinkButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+
+export const metadata: Metadata = {
+  title: "vidnex — the digital home for African entertainment",
+  description:
+    "Short-form video, real creator relationships, and one in-app token. Launching with Afrobeats · Nigeria.",
+};
+
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "Arrive with a video",
+    copy: "Short-form video is the door in — the same clips already moving on TikTok and Instagram, now with a home.",
+  },
+  {
+    step: "02",
+    title: "Stay for the relationship",
+    copy: "Creator pages, memberships, direct support — the parasocial connection an algorithm feed can't give you.",
+  },
+  {
+    step: "03",
+    title: "Move value with one token",
+    copy: "Tip, unlock, boost, subscribe — all in one balance, all inside vidnex, never a speculative asset.",
+  },
+];
 
 const UTILITIES = [
   {
@@ -31,22 +56,7 @@ const UTILITIES = [
 export default function Home() {
   return (
     <>
-      <header className="border-b border-border-subtle">
-        <Container className="flex h-20 items-center justify-between">
-          <Logo />
-          <nav className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="hidden sm:inline text-sm font-medium text-ink-muted hover:text-ink transition-colors"
-            >
-              Sign in
-            </Link>
-            <LinkButton href="/login" size="sm">
-              Join the waitlist
-            </LinkButton>
-          </nav>
-        </Container>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1">
         <section className="relative overflow-hidden">
@@ -67,12 +77,26 @@ export default function Home() {
               Instagram — creators bring their most engaged fans here.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <LinkButton href="/login" size="lg">
+              <LinkButton href="/creators" size="lg">
                 I&rsquo;m a creator
               </LinkButton>
               <LinkButton href="/login" size="lg" variant="secondary">
                 I&rsquo;m a fan
               </LinkButton>
+            </div>
+          </Container>
+        </section>
+
+        <section className="border-t border-border-subtle">
+          <Container className="py-20">
+            <div className="grid sm:grid-cols-3 gap-8">
+              {HOW_IT_WORKS.map((s) => (
+                <div key={s.step}>
+                  <span className="font-display text-sm font-bold text-magenta">{s.step}</span>
+                  <h3 className="mt-2 font-display text-lg font-bold">{s.title}</h3>
+                  <p className="mt-2 text-ink-muted leading-relaxed">{s.copy}</p>
+                </div>
+              ))}
             </div>
           </Container>
         </section>
@@ -100,14 +124,26 @@ export default function Home() {
             </div>
           </Container>
         </section>
+
+        <section className="border-t border-border-subtle">
+          <Container className="py-20">
+            <div className="rounded-2xl bg-flame p-10 sm:p-14 text-center">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
+                Already own an audience on TikTok or IG?
+              </h2>
+              <p className="mt-3 text-white/90 max-w-xl mx-auto">
+                Bring your most engaged fans somewhere they can actually support you. Register
+                your interest — we&rsquo;re onboarding creators for the Afrobeats launch now.
+              </p>
+              <LinkButton href="/creators" size="lg" variant="secondary" className="mt-8">
+                Join the creator waitlist
+              </LinkButton>
+            </div>
+          </Container>
+        </section>
       </main>
 
-      <footer className="border-t border-border-subtle">
-        <Container className="py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-ink-faint">
-          <span>© {new Date().getFullYear()} vidnex</span>
-          <span>Tokens are an in-app ledger, not a financial product.</span>
-        </Container>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

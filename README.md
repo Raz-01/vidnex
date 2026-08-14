@@ -6,13 +6,14 @@ full product brief, [DECISIONS.md](./DECISIONS.md) for build decisions, and
 [TOKENOMICS.md](./TOKENOMICS.md) for the token model.
 
 This repo is built in milestones (**M0 → M4**), each deployable and
-demoable on its own. Current status: **M0 — Scaffold & design system**.
+demoable on its own. Current status: **M1 — Marketing site**.
 
-**Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) — design
-system, landing page, and login UI are live. Auth (Google/email) and any DB
-writes are **not yet functional in production**: the deploy runs on
-placeholder Neon/Upstash/Google/Resend credentials so the build succeeds;
-swap in real ones (see below) to light those up.
+**Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) — landing
+page, [/creators](https://vidnex-chi.vercel.app/creators) waitlist, and
+login UI are all live. Auth (Google/email) and any DB writes (including
+waitlist submissions) are **not yet functional in production**: the
+deploy runs on placeholder Neon/Upstash/Google/Resend credentials so the
+build succeeds; swap in real ones (see below) to light those up.
 
 ## Stack
 
@@ -97,7 +98,7 @@ Bricolage Grotesque, body is Inter. See `app/globals.css` for tokens and
 ## Milestone status
 
 - [x] **M0** — Scaffold, design system, auth, schema, PWA shell.
-- [ ] **M1** — Marketing site.
+- [x] **M1** — Marketing site (landing page, creator waitlist, share metadata).
 - [ ] **M2** — Creator pages, video (Mux), free social.
 - [ ] **M3** — Token economy (internal ledger) + creator dashboard.
 - [ ] **M4** — Curated feed, admin, instrumentation.

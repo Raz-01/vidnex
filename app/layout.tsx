@@ -36,6 +36,19 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
+  openGraph: {
+    type: "website",
+    siteName: "vidnex",
+    title: "vidnex — the digital home for African entertainment",
+    description:
+      "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "vidnex — the digital home for African entertainment",
+    description:
+      "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
+  },
 };
 
 export const viewport: Viewport = {

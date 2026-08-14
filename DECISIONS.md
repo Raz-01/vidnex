@@ -2,6 +2,45 @@
 
 Running log of build decisions and why. Newest first.
 
+## M1
+
+**Creators go through a waitlist (`creator_waitlist` table), not
+self-serve signup.** Fans can already sign in via M0's Auth.js flow with
+no gate. Creators can't yet — creator tooling (profile pages, dashboard)
+doesn't exist until M2/M3, and TOKENOMICS.md concentrates anti-abuse
+verification on the creator side ("real, unique creators, manually
+approved for MVP"). A waitlist is the right shape for "manually approved":
+a human-reviewed queue, not a table that grants a role on insert.
+
+**Waitlist form is a plain progressive-enhancement server action
+(`app/creators/page.tsx` + `lib/waitlist/actions.ts`), not a client
+component with `useActionState`.** Matches the pattern already established
+by the M0 login forms — no client JS required for the core flow, errors
+round-trip via a redirect + `?error=` query param read in the server
+component. Simpler than introducing client-side form state for one
+milestone's one form.
+
+**Waitlist submission is idempotent on email, silently.** Re-submitting an
+already-registered email redirects to the same "you're on the list"
+confirmation rather than surfacing a "you've already applied" error —
+nothing sensitive is at stake either way, and it avoids a confusing dead
+end for a well-intentioned retry (e.g. someone unsure if their first
+submit went through).
+
+**Share images are generated from code (`app/opengraph-image.tsx` via
+`next/og`), not a static PNG asset.** Keeps the OG image in sync with the
+same flame-gradient mark used everywhere else (`components/ui/logo.tsx`)
+without a second asset to keep updated by hand — same reasoning as the
+`sharp` icon-generation script in M0.
+
+**Generated and committed the initial Drizzle migration
+(`drizzle/0000_heavy_meggan.sql`) even without a live database to run it
+against yet.** `drizzle-kit generate` only diffs the TypeScript schema
+against migration snapshots — it doesn't need real DB connectivity — so
+there's no reason to leave `/drizzle` empty until real Neon credentials
+show up. `npm run db:migrate` (or `db:push` for fast pre-launch iteration)
+applies it once a real `DATABASE_URL` is set.
+
 **Deployed M0 to Vercel on placeholder service credentials, not held back
 waiting for real ones.**
 Real Neon/Upstash/Google OAuth/Resend accounts weren't available yet. Since
