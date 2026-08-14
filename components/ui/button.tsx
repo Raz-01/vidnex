@@ -45,7 +45,7 @@ export interface LinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement>
   size?: ButtonSize;
 }
 
-/** Button-styled navigation — renders a real `<a>` via next/link, never nested in a `<button>`. */
+/** Button-styled navigation - renders a real `<a>` via next/link, never nested in a `<button>`. */
 export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
   ({ className, variant = "primary", size = "md", href, ...props }, ref) => (
     <Link ref={ref} href={href} className={buttonClasses(variant, size, className)} {...props} />

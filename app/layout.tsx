@@ -17,7 +17,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "vidnex — the digital home for African entertainment",
+    default: "vidnex - the digital home for African entertainment",
     template: "%s · vidnex",
   },
   description:
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "vidnex",
-    title: "vidnex — the digital home for African entertainment",
+    title: "vidnex - the digital home for African entertainment",
     description:
       "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "vidnex — the digital home for African entertainment",
+    title: "vidnex - the digital home for African entertainment",
     description:
       "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
   },

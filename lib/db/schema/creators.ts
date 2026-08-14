@@ -28,7 +28,7 @@ export const creators = pgTable("creators", {
   scene: text("scene").notNull().default("afrobeats"),
 
   // Creator-side verification is where anti-abuse effort concentrates
-  // (see TOKENOMICS.md) — real, unique creators, manually approved for MVP.
+  // (see TOKENOMICS.md) - real, unique creators, manually approved for MVP.
   isVerified: boolean("is_verified").notNull().default(false),
 
   // Denormalized counters, updated by application logic (kept in sync via

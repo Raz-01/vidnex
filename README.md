@@ -1,14 +1,14 @@
 # vidnex
 
-The digital home for African entertainment — short-form video, real creator
+The digital home for African entertainment - short-form video, real creator
 relationships, and one in-app token. See [CLAUDE.md](./CLAUDE.md) for the
 full product brief, [DECISIONS.md](./DECISIONS.md) for build decisions, and
 [TOKENOMICS.md](./TOKENOMICS.md) for the token model.
 
 This repo is built in milestones (**M0 → M4**), each deployable and
-demoable on its own. Current status: **M1 — Marketing site**.
+demoable on its own. Current status: **M1 - Marketing site**.
 
-**Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) — landing
+**Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) - landing
 page, [/creators](https://vidnex-chi.vercel.app/creators) waitlist, and
 login UI are all live. Auth (Google/email) and any DB writes (including
 waitlist submissions) are **not yet functional in production**: the
@@ -34,15 +34,15 @@ npm run dev                  # http://localhost:3000
 
 | Service | Why | Get it |
 |---|---|---|
-| Neon (Postgres) | Primary database | [neon.tech](https://neon.tech) — copy the pooled connection string into `DATABASE_URL` |
-| Upstash (Redis) | Feed cache + rate limiting | [upstash.com](https://upstash.com) — REST URL + token |
-| Google OAuth | Sign-in provider | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) — redirect URI `{APP_URL}/api/auth/callback/google` |
-| Resend | Magic-link email sign-in | [resend.com](https://resend.com) — API key |
+| Neon (Postgres) | Primary database | [neon.tech](https://neon.tech) - copy the pooled connection string into `DATABASE_URL` |
+| Upstash (Redis) | Feed cache + rate limiting | [upstash.com](https://upstash.com) - REST URL + token |
+| Google OAuth | Sign-in provider | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) - redirect URI `{APP_URL}/api/auth/callback/google` |
+| Resend | Magic-link email sign-in | [resend.com](https://resend.com) - API key |
 
 Generate `AUTH_SECRET` with `npx auth secret`.
 
 Everything else in `.env.example` (Mux, R2, PostHog) is wired for later
-milestones — safe to leave blank until then; those code paths aren't
+milestones - safe to leave blank until then; those code paths aren't
 exercised yet.
 
 ## Scripts
@@ -56,17 +56,17 @@ npm run test           # vitest (ledger + logic tests)
 npm run icons          # regenerate PWA/favicon PNGs from the logo mark
 npm run db:generate    # generate a new Drizzle migration from schema changes
 npm run db:push        # push schema directly (fast iteration, pre-launch)
-npm run db:studio      # Drizzle Studio — browse the database
+npm run db:studio      # Drizzle Studio - browse the database
 ```
 
 ## Project layout
 
 ```
-/app            # Next.js routes (marketing, auth, and — soon — creator/feed/dashboard/admin)
+/app            # Next.js routes (marketing, auth, and - soon - creator/feed/dashboard/admin)
 /components/ui  # Design system primitives (Button, Card, Badge, Logo, ...)
 /lib
   /db           # Drizzle schema + Neon/Redis clients
-  /token        # TokenLedger interface + implementation (DECISION 0 — swappable for on-chain later)
+  /token        # TokenLedger interface + implementation (DECISION 0 - swappable for on-chain later)
   /auth         # Auth.js v5 config
 /drizzle        # Generated SQL migrations
 /scripts        # One-off build scripts (icon generation)
@@ -78,11 +78,11 @@ Deployed via Vercel CLI to `raz-s-projects01/vidnex`, GitHub-connected
 (`Raz-01/vidnex`, `main`) for auto-deploy on push. Env vars for
 Neon/Upstash/Google/Resend are currently **placeholders** (set across
 Production/Preview/Development) so the build succeeds without live
-credentials — the site is up but auth and DB-backed features are inert.
+credentials - the site is up but auth and DB-backed features are inert.
 To make them real: `vercel env rm <NAME> production` then
 `vercel env add <NAME> production` with the real value, for each of
 `DATABASE_URL`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
-`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_RESEND_KEY` — then
+`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_RESEND_KEY` - then
 `vercel deploy --prod`. Neon and Upstash both have first-party Vercel
 integrations that can wire the connection strings for you automatically
 instead.
@@ -97,9 +97,9 @@ Bricolage Grotesque, body is Inter. See `app/globals.css` for tokens and
 
 ## Milestone status
 
-- [x] **M0** — Scaffold, design system, auth, schema, PWA shell.
-- [x] **M1** — Marketing site (landing page, creator waitlist, share metadata).
-- [ ] **M2** — Creator pages, video (Mux), free social.
-- [ ] **M3** — Token economy (internal ledger) + creator dashboard.
-- [ ] **M4** — Curated feed, admin, instrumentation.
-- [ ] **M5** — *Deferred.* On-chain settlement (Solana) + real fiat. Not started.
+- [x] **M0** - Scaffold, design system, auth, schema, PWA shell.
+- [x] **M1** - Marketing site (landing page, creator waitlist, share metadata).
+- [ ] **M2** - Creator pages, video (Mux), free social.
+- [ ] **M3** - Token economy (internal ledger) + creator dashboard.
+- [ ] **M4** - Curated feed, admin, instrumentation.
+- [ ] **M5** - *Deferred.* On-chain settlement (Solana) + real fiat. Not started.

@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "vidnex — the digital home for African entertainment",
+  title: "vidnex - the digital home for African entertainment",
   description:
     "Short-form video, real creator relationships, and one in-app token. Launching with Afrobeats · Nigeria.",
 };
@@ -16,17 +16,17 @@ const HOW_IT_WORKS = [
   {
     step: "01",
     title: "Arrive with a video",
-    copy: "Short-form video is the door in — the same clips already moving on TikTok and Instagram, now with a home.",
+    copy: "Short-form video is the door in - the same clips already moving on TikTok and Instagram, now with a home.",
   },
   {
     step: "02",
     title: "Stay for the relationship",
-    copy: "Creator pages, memberships, direct support — the parasocial connection an algorithm feed can't give you.",
+    copy: "Creator pages, memberships, direct support - the parasocial connection an algorithm feed can't give you.",
   },
   {
     step: "03",
     title: "Move value with one token",
-    copy: "Tip, unlock, boost, subscribe — all in one balance, all inside vidnex, never a speculative asset.",
+    copy: "Tip, unlock, boost, subscribe - all in one balance, all inside vidnex, never a speculative asset.",
   },
 ];
 
@@ -39,7 +39,7 @@ const UTILITIES = [
   {
     name: "Access",
     tone: "brand" as const,
-    copy: "Unlock a drop before anyone else — exclusive cuts, early releases.",
+    copy: "Unlock a drop before anyone else - exclusive cuts, early releases.",
   },
   {
     name: "Boost",
@@ -74,7 +74,7 @@ export default function Home() {
             <p className="mt-6 text-lg sm:text-xl text-ink-muted max-w-2xl mx-auto leading-relaxed">
               Short-form video is how people arrive. Real creator relationships are why they
               stay. One token is how value moves. We don&rsquo;t ask anyone to leave TikTok or
-              Instagram — creators bring their most engaged fans here.
+              Instagram - creators bring their most engaged fans here.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <LinkButton href="/creators" size="lg">
@@ -108,7 +108,7 @@ export default function Home() {
                 Free social, always. <span className="text-token">Token</span> for more.
               </h2>
               <p className="mt-3 text-ink-muted">
-                Watch, like, comment, follow, share — never costs a token. It only enters when a
+                Watch, like, comment, follow, share - never costs a token. It only enters when a
                 fan wants to go further.
               </p>
             </div>
@@ -133,7 +133,7 @@ export default function Home() {
               </h2>
               <p className="mt-3 text-white/90 max-w-xl mx-auto">
                 Bring your most engaged fans somewhere they can actually support you. Register
-                your interest — we&rsquo;re onboarding creators for the Afrobeats launch now.
+                your interest - we&rsquo;re onboarding creators for the Afrobeats launch now.
               </p>
               <LinkButton href="/creators" size="lg" variant="secondary" className="mt-8">
                 Join the creator waitlist

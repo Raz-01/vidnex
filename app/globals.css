@@ -31,7 +31,7 @@
   --color-magenta: #ef2d84;
   --color-violet: #a435d1;
 
-  /* Token / currency accent — reserved exclusively for token UI */
+  /* Token / currency accent - reserved exclusively for token UI */
   --color-gold: #ffc94a;
   --color-gold-deep: #e8a521;
 
@@ -89,7 +89,7 @@ h1, h2, h3, h4, .font-display {
   font-family: var(--font-display);
 }
 
-/* Signature flame gradient — brand moments only (logo, primary CTA, hero copy) */
+/* Signature flame gradient - brand moments only (logo, primary CTA, hero copy) */
 .bg-flame {
   background-image: linear-gradient(
     100deg,
@@ -111,7 +111,7 @@ h1, h2, h3, h4, .font-display {
   color: transparent;
 }
 
-/* Token accent — use only for balance, earn, spend UI so it stays meaningful */
+/* Token accent - use only for balance, earn, spend UI so it stays meaningful */
 .text-token {
   color: var(--color-gold);
 }
@@ -125,7 +125,7 @@ h1, h2, h3, h4, .font-display {
   color: white;
 }
 
-/* Scrollbar (webkit) — kept subtle so it never competes with content */
+/* Scrollbar (webkit) - kept subtle so it never competes with content */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

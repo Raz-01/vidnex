@@ -58,7 +58,7 @@ export class DbTokenLedger implements TokenLedger {
       const entries = await db.transaction(async (tx) => tx.insert(tokenLedgerEntries).values(rows).returning());
       return { transferId, alreadyApplied: false, entries };
     } catch (err) {
-      // Lost a race with a concurrent identical call — treat as a replay.
+      // Lost a race with a concurrent identical call - treat as a replay.
       if (isUniqueViolation(err)) {
         const raced = await this.#findByIdempotencyKey(firstLegKey);
         if (raced) return this.#alreadyAppliedResult(raced.transferId);

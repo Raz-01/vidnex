@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 
 /**
  * A user is anyone with an account. Being a "creator" is an additive role
- * (see `creators`), not a separate identity — every creator is also a user.
+ * (see `creators`), not a separate identity - every creator is also a user.
  */
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),

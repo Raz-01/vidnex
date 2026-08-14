@@ -1,7 +1,7 @@
 import { pgTable, text, timestamp, uuid, integer, pgEnum, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
- * The token ledger — an internal, append-only accounting log (DECISION 0 in
+ * The token ledger - an internal, append-only accounting log (DECISION 0 in
  * CLAUDE.md: an internal ledger for the MVP, not an on-chain asset). This
  * table is the single source of truth for token movement; any balance
  * shown elsewhere (e.g. creators.tokenBalance) is a cache derived from it.
@@ -31,7 +31,7 @@ export const ledgerEntryTypeEnum = pgEnum("ledger_entry_type", [
   "boost_treasury_in", // discovery treasury's share of a boost (credit treasury)
   "membership_out", // user pays a recurring membership (debit user)
   "membership_in", // creator receives membership revenue (credit creator)
-  "cashout_simulated", // creator "cashes out" — simulated/manual, clearly labelled, no real payout
+  "cashout_simulated", // creator "cashes out" - simulated/manual, clearly labelled, no real payout
   "adjustment", // manual/admin correction, always requires a note
 ]);
 
@@ -51,7 +51,7 @@ export const tokenLedgerEntries = pgTable(
     // Integer token units. Positive = credit, negative = debit. Never a float.
     amount: integer("amount").notNull(),
 
-    // Counterparties / related rows, for display and audit — all optional.
+    // Counterparties / related rows, for display and audit - all optional.
     relatedUserId: uuid("related_user_id"),
     relatedCreatorId: uuid("related_creator_id"),
     relatedVideoId: uuid("related_video_id"),

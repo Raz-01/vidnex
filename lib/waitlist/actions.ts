@@ -16,7 +16,7 @@ const waitlistSchema = z.object({
 
 /**
  * Registers creator interest (M1). This is a queue for manual review, not a
- * self-serve signup — see TOKENOMICS.md on creator-side verification.
+ * self-serve signup - see TOKENOMICS.md on creator-side verification.
  * Idempotent on email: re-submitting the same email is treated as success
  * rather than leaking "you're already on the list" (nothing sensitive
  * either way, just avoids a confusing error for a well-intentioned retry).

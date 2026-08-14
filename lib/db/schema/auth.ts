@@ -3,7 +3,7 @@ import { users } from "./users";
 
 /**
  * Auth.js (next-auth v5) DrizzleAdapter tables. Schema follows the adapter's
- * expected shape exactly — see https://authjs.dev/getting-started/adapters/drizzle
+ * expected shape exactly - see https://authjs.dev/getting-started/adapters/drizzle
  */
 export const accounts = pgTable(
   "accounts",

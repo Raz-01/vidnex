@@ -20,7 +20,7 @@ const REASONS = [
   },
   {
     title: "Get paid four ways",
-    copy: "Tips, exclusive unlocks, boosted discovery, and recurring memberships — all direct from fans to you.",
+    copy: "Tips, exclusive unlocks, boosted discovery, and recurring memberships - all direct from fans to you.",
   },
   {
     title: "Real people, not bots",
@@ -29,8 +29,8 @@ const REASONS = [
 ];
 
 const ERROR_MESSAGES: Record<string, string> = {
-  invalid: "Please check your details — name, email, and a link to your page are all required.",
-  rate_limited: "Too many submissions from this connection — try again in a few minutes.",
+  invalid: "Please check your details - name, email, and a link to your page are all required.",
+  rate_limited: "Too many submissions from this connection - try again in a few minutes.",
 };
 
 export default async function CreatorsPage({
@@ -61,8 +61,8 @@ export default async function CreatorsPage({
               </h1>
               <p className="mt-6 text-lg text-ink-muted leading-relaxed">
                 vidnex is a digital home for African entertainment, built around
-                creator–fan relationships instead of an algorithm feed. We&rsquo;re
-                onboarding a first wave of creators by hand — tell us about yourself below.
+                creator-fan relationships instead of an algorithm feed. We&rsquo;re
+                onboarding a first wave of creators by hand - tell us about yourself below.
               </p>
             </div>
 
@@ -119,7 +119,7 @@ export default async function CreatorsPage({
                   </div>
                   <div className="grid gap-1.5">
                     <label htmlFor="primaryLink" className="text-sm font-medium text-ink-muted">
-                      Your page (TikTok, IG, YouTube — wherever fans find you)
+                      Your page (TikTok, IG, YouTube - wherever fans find you)
                     </label>
                     <input
                       id="primaryLink"

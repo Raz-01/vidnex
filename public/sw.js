@@ -1,5 +1,5 @@
 // Minimal service worker: PWA installability + a tiny offline fallback.
-// Deliberately does NOT cache API routes or video/HLS traffic — Mux assets
+// Deliberately does NOT cache API routes or video/HLS traffic - Mux assets
 // are served from Mux's CDN directly and should never be intercepted here.
 const CACHE = "vidnex-shell-v1";
 const SHELL_ASSETS = ["/", "/manifest.webmanifest", "/icons/icon-192.png"];

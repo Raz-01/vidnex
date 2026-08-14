@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     environment: "node",
     // Unit tests never touch a real DB/Redis (see lib/token/db-ledger.test.ts
-    // — validation runs before any network call), but lib/db/client.ts and
+    // - validation runs before any network call), but lib/db/client.ts and
     // lib/db/redis.ts throw at import time if these are unset. Dummy values
     // let `npm test` run without a real .env.local, same as CI.
     env: {

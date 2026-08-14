@@ -4,7 +4,7 @@ import { creators } from "./creators";
 import { videos } from "./videos";
 
 /**
- * Free social primitives — follows, likes, comments. NON-NEGOTIABLE: these
+ * Free social primitives - follows, likes, comments. NON-NEGOTIABLE: these
  * never cost a token (see CLAUDE.md principle #1). No token logic belongs
  * anywhere in this file.
  */

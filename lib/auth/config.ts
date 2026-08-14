@@ -6,7 +6,7 @@ import { db } from "@/lib/db/client";
 import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema";
 
 /**
- * Auth.js v5 — email (magic link, via Resend) + Google. No wallet auth in
+ * Auth.js v5 - email (magic link, via Resend) + Google. No wallet auth in
  * the MVP (see CLAUDE.md). Sessions are stored in Postgres via the Drizzle
  * adapter so we can join user identity against creators/token accounts
  * server-side without a separate session store.

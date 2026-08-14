@@ -6,7 +6,7 @@ Running log of build decisions and why. Newest first.
 
 **Creators go through a waitlist (`creator_waitlist` table), not
 self-serve signup.** Fans can already sign in via M0's Auth.js flow with
-no gate. Creators can't yet — creator tooling (profile pages, dashboard)
+no gate. Creators can't yet - creator tooling (profile pages, dashboard)
 doesn't exist until M2/M3, and TOKENOMICS.md concentrates anti-abuse
 verification on the creator side ("real, unique creators, manually
 approved for MVP"). A waitlist is the right shape for "manually approved":
@@ -15,14 +15,14 @@ a human-reviewed queue, not a table that grants a role on insert.
 **Waitlist form is a plain progressive-enhancement server action
 (`app/creators/page.tsx` + `lib/waitlist/actions.ts`), not a client
 component with `useActionState`.** Matches the pattern already established
-by the M0 login forms — no client JS required for the core flow, errors
+by the M0 login forms - no client JS required for the core flow, errors
 round-trip via a redirect + `?error=` query param read in the server
 component. Simpler than introducing client-side form state for one
 milestone's one form.
 
 **Waitlist submission is idempotent on email, silently.** Re-submitting an
 already-registered email redirects to the same "you're on the list"
-confirmation rather than surfacing a "you've already applied" error —
+confirmation rather than surfacing a "you've already applied" error -
 nothing sensitive is at stake either way, and it avoids a confusing dead
 end for a well-intentioned retry (e.g. someone unsure if their first
 submit went through).
@@ -30,13 +30,13 @@ submit went through).
 **Share images are generated from code (`app/opengraph-image.tsx` via
 `next/og`), not a static PNG asset.** Keeps the OG image in sync with the
 same flame-gradient mark used everywhere else (`components/ui/logo.tsx`)
-without a second asset to keep updated by hand — same reasoning as the
+without a second asset to keep updated by hand - same reasoning as the
 `sharp` icon-generation script in M0.
 
 **Generated and committed the initial Drizzle migration
 (`drizzle/0000_heavy_meggan.sql`) even without a live database to run it
 against yet.** `drizzle-kit generate` only diffs the TypeScript schema
-against migration snapshots — it doesn't need real DB connectivity — so
+against migration snapshots - it doesn't need real DB connectivity - so
 there's no reason to leave `/drizzle` empty until real Neon credentials
 show up. `npm run db:migrate` (or `db:push` for fast pre-launch iteration)
 applies it once a real `DATABASE_URL` is set.
@@ -45,7 +45,7 @@ applies it once a real `DATABASE_URL` is set.
 waiting for real ones.**
 Real Neon/Upstash/Google OAuth/Resend accounts weren't available yet. Since
 `next build` needs *some* value for `DATABASE_URL` etc. (client construction
-happens at module scope — see the CI decision below), placeholder values
+happens at module scope - see the CI decision below), placeholder values
 were set as real Vercel env vars (Production/Preview/Development) so the
 milestone is actually live and demoable per CLAUDE.md's "each milestone
 must be deployable" requirement, rather than sitting unshipped. Auth
@@ -67,7 +67,7 @@ explicitly specifies Next.js 15, and the wider stack (`next-auth` v5 beta,
 `@auth/drizzle-adapter`) is best-tested against Next 15 + React 18.
 Downgraded immediately after scaffolding rather than fighting compatibility
 issues mid-build. Revisit the jump to 16/19 as a deliberate, tested upgrade
-later — not a side effect of `create-next-app` defaults.
+later - not a side effect of `create-next-app` defaults.
 
 **Neon driver: `neon-http` (fetch-based), not `neon-serverless` (websocket).**
 `neon-http` needs no persistent connection, which fits Vercel's
@@ -101,7 +101,7 @@ detected by checking for the first leg's derived key.
 For an MVP demo, installability + a thin app-shell cache is all that's
 needed; a hand-rolled ~30-line service worker (`public/sw.js`) is easier to
 reason about than debugging a plugin's App Router compatibility, and it
-explicitly never intercepts `/api/*` or cross-origin requests — important
+explicitly never intercepts `/api/*` or cross-origin requests - important
 once Mux/HLS traffic shows up in M2.
 
 **Icons generated from one SVG source via a `sharp` script
@@ -114,7 +114,7 @@ of stale PNGs drifting from the source of truth.
 **Design system: dark-first canvas, a signature "flame" gradient (coral →
 magenta → violet) for brand moments, gold reserved exclusively for
 token/currency UI.**
-CLAUDE.md calls for distinctive, premium, culturally-native — energy and
+CLAUDE.md calls for distinctive, premium, culturally-native - energy and
 warmth without stereotype (i.e., not a literal flag palette). Dark-first
 because this is a video-first product (like the apps it's meant to funnel
 fans in from); gold is scoped to token UI only so it stays legible as "this
@@ -122,7 +122,7 @@ is currency" rather than becoming a generic accent color.
 
 **CI builds with dummy env values, not real secrets.**
 `next build` constructs the DB/Redis/Auth clients at import time (module
-scope), which throws if env vars are unset — but construction never
+scope), which throws if env vars are unset - but construction never
 performs a network call. CI sets clearly-fake placeholder values so the
 build/typecheck/test pipeline runs without needing real Neon/Upstash/Auth
 credentials in GitHub Actions. Real secrets live only in Vercel project

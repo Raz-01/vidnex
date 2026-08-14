@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Dummy values so `next build` can construct DB/Redis/Auth clients at
-      # import time — no network calls happen during a build. Real secrets
+      # import time - no network calls happen during a build. Real secrets
       # live in Vercel project env vars, never here.
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       DATABASE_URL: postgresql://user:password@localhost/vidnex_ci

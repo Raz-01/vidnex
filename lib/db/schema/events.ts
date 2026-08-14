@@ -4,7 +4,7 @@ import { users } from "./users";
 /**
  * Internal analytics log, alongside PostHog (lib/events). Kept in our own
  * DB so investor-facing metrics (creators onboarded, engagement, token
- * velocity, membership uptake, retention — see M4) are queryable without
+ * velocity, membership uptake, retention - see M4) are queryable without
  * depending on a third-party analytics export.
  */
 export const events = pgTable("events", {
