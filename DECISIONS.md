@@ -2,6 +2,19 @@
 
 Running log of build decisions and why. Newest first.
 
+**Deployed M0 to Vercel on placeholder service credentials, not held back
+waiting for real ones.**
+Real Neon/Upstash/Google OAuth/Resend accounts weren't available yet. Since
+`next build` needs *some* value for `DATABASE_URL` etc. (client construction
+happens at module scope — see the CI decision below), placeholder values
+were set as real Vercel env vars (Production/Preview/Development) so the
+milestone is actually live and demoable per CLAUDE.md's "each milestone
+must be deployable" requirement, rather than sitting unshipped. Auth
+sign-in and any DB write will error until real credentials replace the
+placeholders (swap instructions in README). Public repo:
+[github.com/Raz-01/vidnex](https://github.com/Raz-01/vidnex). Live:
+[vidnex-chi.vercel.app](https://vidnex-chi.vercel.app).
+
 ## M0
 
 **Package/repo name is `vidnex`, not the `theapp` placeholder.**

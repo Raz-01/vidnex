@@ -8,6 +8,12 @@ full product brief, [DECISIONS.md](./DECISIONS.md) for build decisions, and
 This repo is built in milestones (**M0 → M4**), each deployable and
 demoable on its own. Current status: **M0 — Scaffold & design system**.
 
+**Live:** [vidnex-chi.vercel.app](https://vidnex-chi.vercel.app) — design
+system, landing page, and login UI are live. Auth (Google/email) and any DB
+writes are **not yet functional in production**: the deploy runs on
+placeholder Neon/Upstash/Google/Resend credentials so the build succeeds;
+swap in real ones (see below) to light those up.
+
 ## Stack
 
 Next.js 15 (App Router) · TypeScript · Tailwind v4 · Drizzle ORM + Neon
@@ -67,10 +73,18 @@ npm run db:studio      # Drizzle Studio — browse the database
 
 ## Deploying
 
-This is a standard Next.js app — deploy to [Vercel](https://vercel.com),
-connect the repo, and set the env vars from `.env.example` in the project
-settings. Neon and Upstash both have first-party Vercel integrations that
-can wire the connection strings for you automatically.
+Deployed via Vercel CLI to `raz-s-projects01/vidnex`, GitHub-connected
+(`Raz-01/vidnex`, `main`) for auto-deploy on push. Env vars for
+Neon/Upstash/Google/Resend are currently **placeholders** (set across
+Production/Preview/Development) so the build succeeds without live
+credentials — the site is up but auth and DB-backed features are inert.
+To make them real: `vercel env rm <NAME> production` then
+`vercel env add <NAME> production` with the real value, for each of
+`DATABASE_URL`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
+`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_RESEND_KEY` — then
+`vercel deploy --prod`. Neon and Upstash both have first-party Vercel
+integrations that can wire the connection strings for you automatically
+instead.
 
 ## Design system
 
