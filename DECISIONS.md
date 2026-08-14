@@ -2,6 +2,54 @@
 
 Running log of build decisions and why. Newest first.
 
+## M2
+
+**Creator profiles are self-serve (`/studio`), separate from the M1
+waitlist.** The waitlist is the real-launch recruitment funnel (human
+review before onboarding, per TOKENOMICS.md). But M2's job is to prove
+the upload-and-watch loop end to end, and that needs actual `creators`
+rows to attach videos to. Any signed-in user can create one; `isVerified`
+stays false until an admin flips it (M4). Two separate concerns, one
+schema.
+
+**Video permalinks are `/watch/[videoId]`, not nested under
+`/[handle]/v/[videoId]`.** A flat route is simpler to link, share, and
+revalidate from server actions (no need to carry the creator's handle
+through the like/comment/follow call chain just to redirect or
+revalidate). The creator page still links into it from the video grid.
+
+**Mux upload flow: pending `videos` row created first, then the Mux
+direct upload, `passthrough` set to that row's id.** The webhook handler
+matches the resulting asset back to our row via `passthrough` alone - no
+second lookup table keyed on `upload_id` needed. `video.asset.created`
+moves status to `processing`, `video.asset.ready` to `ready` (with
+`playback_id`/`duration`/`thumbnail`), `video.asset.errored` to
+`errored` - all three write paths share the same `passthrough`-based
+match.
+
+**Webhook route reads the raw body via `request.text()`, not
+`request.json()`.** Mux's signature verification (`mux.webhooks.unwrap`)
+hashes the exact bytes sent; parsing first would still work for the
+comparison as long as we didn't touch the string, but reading raw text is
+the documented-safe pattern and avoids any risk of a body transform
+changing byte content before verification.
+
+**Follow/like are called directly as server actions from client
+components (not `<form action>`), with local `useTransition` state for
+immediate feedback.** These need instant toggle feedback (heart fills,
+follow button flips) that a full-page-reload form submission wouldn't
+give without extra client wiring anyway; Next 15 supports importing a
+`"use server"` function straight into a Client Component, so this needed
+no API route. Comments use a plain form instead - no toggle, so
+progressive enhancement is enough, matching the M0/M1 form pattern.
+
+**No image upload for creator avatars/banners in M2 (paste-a-URL only via
+social links; avatar itself is a generated initial-letter circle).**
+Cloudflare R2 (the brief's media store) has no credentials yet, and
+building real image upload for a value that's cosmetic right now would
+be scope the milestone doesn't need. `creators.avatarUrl`/`bannerUrl`
+columns already exist in the schema for when R2 is wired up.
+
 ## M1
 
 **Creators go through a waitlist (`creator_waitlist` table), not

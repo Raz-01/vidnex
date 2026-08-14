@@ -17,6 +17,9 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
+    "@mux/mux-node": "^15.0.0",
+    "@mux/mux-player-react": "^3.13.2",
+    "@mux/upchunk": "^3.5.0",
     "@neondatabase/serverless": "^1.1.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.2",
