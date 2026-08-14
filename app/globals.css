@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* ============================================================
+   VIDNEX DESIGN SYSTEM
+   Premium, dark-first, culturally-energetic entertainment UI.
+   Signature: a warm "flame" gradient (coral -> magenta) for
+   brand moments, a gold accent reserved for the token/currency,
+   and a deep near-black canvas so video content is the hero.
+   ============================================================ */
+
+:root {
+  /* Canvas */
+  --color-canvas: #0b0a0e;
+  --color-canvas-raised: #131218;
+  --color-canvas-overlay: #1b1a22;
+  --color-border: #2a2830;
+  --color-border-subtle: #201f26;
+
+  /* Text */
+  --color-ink: #f7f4f0;
+  --color-ink-muted: #b9b4c0;
+  --color-ink-faint: #837e8c;
+
+  /* Brand: flame gradient (coral -> magenta) */
+  --color-flame-start: #ff6b3d;
+  --color-flame-mid: #ff3d77;
+  --color-flame-end: #c026d3;
+
+  /* Brand solids (for text/icons/borders where a gradient can't be used) */
+  --color-coral: #ff6b3d;
+  --color-magenta: #ef2d84;
+  --color-violet: #a435d1;
+
+  /* Token / currency accent — reserved exclusively for token UI */
+  --color-gold: #ffc94a;
+  --color-gold-deep: #e8a521;
+
+  /* Semantic */
+  --color-success: #2fd180;
+  --color-danger: #ff5468;
+  --color-info: #4fb8ff;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-canvas-raised: var(--color-canvas-raised);
+  --color-canvas-overlay: var(--color-canvas-overlay);
+  --color-border: var(--color-border);
+  --color-border-subtle: var(--color-border-subtle);
+
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-ink-faint: var(--color-ink-faint);
+
+  --color-coral: var(--color-coral);
+  --color-magenta: var(--color-magenta);
+  --color-violet: var(--color-violet);
+
+  --color-gold: var(--color-gold);
+  --color-gold-deep: var(--color-gold-deep);
+
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-info: var(--color-info);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Signature flame gradient — brand moments only (logo, primary CTA, hero copy) */
+.bg-flame {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-flame-start) 0%,
+    var(--color-flame-mid) 55%,
+    var(--color-flame-end) 100%
+  );
+}
+
+.text-flame {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-flame-start) 0%,
+    var(--color-flame-mid) 55%,
+    var(--color-flame-end) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Token accent — use only for balance, earn, spend UI so it stays meaningful */
+.text-token {
+  color: var(--color-gold);
+}
+
+.bg-token {
+  background-image: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-deep) 100%);
+}
+
+::selection {
+  background: var(--color-magenta);
+  color: white;
+}
+
+/* Scrollbar (webkit) — kept subtle so it never competes with content */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
