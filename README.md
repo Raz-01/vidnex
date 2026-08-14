@@ -15,7 +15,11 @@ login UI are all live. Auth (Google/email), DB writes (waitlist, creator
 profiles), and video upload/playback (Mux) are **not yet functional in
 production**: the deploy runs on placeholder Neon/Upstash/Google/Resend/Mux
 credentials so the build succeeds; swap in real ones (see below) to light
-those up.
+those up. One consequence worth knowing: pages that unconditionally read
+the DB on every request (`/[handle]`, `/watch/[id]`) currently 500 instead
+of 404ing on an unknown handle/video, because the placeholder
+`DATABASE_URL` host doesn't resolve at all - a real Neon connection fixes
+this too.
 
 ## Stack
 

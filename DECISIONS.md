@@ -50,6 +50,17 @@ building real image upload for a value that's cosmetic right now would
 be scope the milestone doesn't need. `creators.avatarUrl`/`bannerUrl`
 columns already exist in the schema for when R2 is wired up.
 
+**Known limitation on the current placeholder-credential deploy:**
+`/[handle]` and `/watch/[id]` read the DB unconditionally on every
+request (there's no session cookie to skip the query the way `/login` and
+`/studio`'s redirect-if-signed-out check can). Against the placeholder
+`DATABASE_URL` (a host that doesn't resolve), that read throws a
+connection error rather than returning zero rows, so an unknown
+handle/video 500s instead of 404ing. Not a code bug - confirmed by the
+fact that non-DB-touching routes (`/login`, `/creators` GET) are
+unaffected - and it resolves itself once a real Neon connection is in
+place.
+
 ## M1
 
 **Creators go through a waitlist (`creator_waitlist` table), not
