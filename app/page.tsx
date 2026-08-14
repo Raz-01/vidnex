@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "vidnex - the digital home for African entertainment",
+  title: "vidnex - the digital home for entertainment culture",
   description:
     "Short-form video, real creator relationships, and one in-app token. Launching with Afrobeats · Nigeria.",
 };
@@ -69,7 +69,7 @@ export default function Home() {
               Launching with Afrobeats · Nigeria
             </Badge>
             <h1 className="font-display text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight max-w-3xl mx-auto">
-              The digital home for <span className="text-flame">African entertainment</span>
+              The digital home for <span className="text-flame">entertainment culture</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-ink-muted max-w-2xl mx-auto leading-relaxed">
               Short-form video is how people arrive. Real creator relationships are why they

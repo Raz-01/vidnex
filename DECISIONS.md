@@ -2,6 +2,19 @@
 
 Running log of build decisions and why. Newest first.
 
+**Corrected brand positioning: "the digital home for entertainment
+culture," not "for African entertainment" - Africa/Afrobeats is the
+launch scene, not the permanent identity.** The founder flagged that the
+site read as permanently Africa-scoped when the actual vision is global,
+starting with one culturally concentrated scene and expanding scene by
+scene (CLAUDE.md's own "THE VISION" section already implied this via the
+"ONE culturally concentrated scene" framing and the "multiple
+scenes/cultures at once" non-goal, but the literal tagline text
+contradicted it everywhere it appeared). Updated CLAUDE.md, the landing
+page, `/creators`, all metadata/OG/manifest copy, and README - the
+specific launch-scene signal ("Launching with Afrobeats · Nigeria") stays
+in badges and subcopy, just not baked into the brand identity itself.
+
 ## M2
 
 **Creator profiles are self-serve (`/studio`), separate from the M1

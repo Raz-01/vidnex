@@ -60,9 +60,10 @@ export default async function CreatorsPage({
                 Turn your most engaged fans into a <span className="text-flame">real income</span>
               </h1>
               <p className="mt-6 text-lg text-ink-muted leading-relaxed">
-                vidnex is a digital home for African entertainment, built around
+                vidnex is a digital home for entertainment culture, built around
                 creator-fan relationships instead of an algorithm feed. We&rsquo;re
-                onboarding a first wave of creators by hand - tell us about yourself below.
+                launching with Afrobeats and onboarding a first wave of creators by hand -
+                tell us about yourself below.
               </p>
             </div>
 

@@ -10,7 +10,7 @@
 
 - Build milestones **M0 → M4 in order** (M5 is a deferred/parallel phase - do NOT start it without explicit go-ahead). Stop and summarize after each milestone.
 - Each milestone must be **deployable and demoable** on its own - this is being shown to investors.
-- **Design quality is a first-class requirement**, not a finishing touch. This is a culturally-driven entertainment product; a generic template-looking app will fail the demo. Prioritize a distinctive, premium, mobile-first aesthetic that feels native to African entertainment (energy, warmth, boldness) without being a stereotype. Use the frontend-design guidance available to you.
+- **Design quality is a first-class requirement**, not a finishing touch. This is a culturally-driven entertainment product; a generic template-looking app will fail the demo. Prioritize a distinctive, premium, mobile-first aesthetic - rooted in the energy of the launch scene (Afrobeats/Nigerian entertainment) without being a stereotype, and built to extend cleanly to other cultures as new scenes launch. Use the frontend-design guidance available to you.
 - Keep a running `DECISIONS.md` and a `README.md` with setup + how to run each milestone.
 - The founder is a strong TypeScript/Next.js developer. Explain non-obvious choices briefly.
 
@@ -28,7 +28,7 @@ Rationale: speed to a demoable product for the seed raise; avoiding Nigerian dig
 
 ## THE VISION (keep in mind)
 
-A **digital home for African entertainment**, launching with ONE culturally concentrated scene (e.g. Afrobeats or Nigerian comedy). Short-form video is how people arrive; **creator-fan relationships** are why they stay; a **single in-app token** is how value moves. We do NOT ask anyone to leave TikTok/Instagram - creators link their home base from there and funnel their most engaged fans in.
+A **digital home for entertainment culture**, global in ambition, launching with ONE culturally concentrated scene (e.g. Afrobeats or Nigerian comedy) as the proof of concept before expanding scene by scene into other cultures. Africa is the starting point, not the ceiling. Short-form video is how people arrive; **creator-fan relationships** are why they stay; a **single in-app token** is how value moves. We do NOT ask anyone to leave TikTok/Instagram - creators link their home base from there and funnel their most engaged fans in.
 
 ---
 

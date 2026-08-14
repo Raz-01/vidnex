@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "vidnex - the digital home for African entertainment";
+export const alt = "vidnex - the digital home for entertainment culture";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -61,7 +61,7 @@ export default async function OpengraphImage() {
             maxWidth: 900,
           }}
         >
-          The digital home for African entertainment
+          The digital home for entertainment culture
         </div>
         <div style={{ marginTop: 24, fontSize: 26, color: "#b9b4c0", maxWidth: 780 }}>
           Short-form video, real creator relationships, one in-app token.

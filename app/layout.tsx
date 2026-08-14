@@ -17,11 +17,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "vidnex - the digital home for African entertainment",
+    default: "vidnex - the digital home for entertainment culture",
     template: "%s · vidnex",
   },
   description:
-    "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
+    "Short-form video, real creator relationships, and one in-app token. Launching with Afrobeats, built to go global.",
   applicationName: "vidnex",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -39,15 +39,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "vidnex",
-    title: "vidnex - the digital home for African entertainment",
+    title: "vidnex - the digital home for entertainment culture",
     description:
-      "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
+      "Short-form video, real creator relationships, and one in-app token. Launching with Afrobeats, built to go global.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "vidnex - the digital home for African entertainment",
+    title: "vidnex - the digital home for entertainment culture",
     description:
-      "Short-form video, real creator relationships, and one in-app token. vidnex is where the culture lives.",
+      "Short-form video, real creator relationships, and one in-app token. Launching with Afrobeats, built to go global.",
   },
 };
 

@@ -1,7 +1,8 @@
 # vidnex
 
-The digital home for African entertainment - short-form video, real creator
-relationships, and one in-app token. See [CLAUDE.md](./CLAUDE.md) for the
+The digital home for entertainment culture - short-form video, real creator
+relationships, and one in-app token. Global in ambition, launching with
+Afrobeats. See [CLAUDE.md](./CLAUDE.md) for the
 full product brief, [DECISIONS.md](./DECISIONS.md) for build decisions, and
 [TOKENOMICS.md](./TOKENOMICS.md) for the token model.
 
